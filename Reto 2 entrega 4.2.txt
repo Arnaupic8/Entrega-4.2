@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char *argv[]) {
+	
+	int sock_conn, sock_listen, ret;
+	struct sockaddr_in serv_adr;
+	char peticion[512];
+	char respuesta[512];
+	double valor;
+	double resultado;
+	
+	double ctof(double celsius)
+	{
+		return celsius * 9/ 5 + 32;
+	}
+	
+	double ftoc(double fahrenheit)
+	{
+		return (fahrenheit - 32) * 5 / 9;
+	}
+	
+	//Obrim el socket
+	if(( sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+		printf("Error creant socket");
+	
+	memset(&serv_adr, 0, sizeof(serv_adr)); //incialitza a zero serv_adr
+	serv_adr.sin_family = AF_INET;
+	
+	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY); //Asocia el socket a cualquiera de las IP de la m￡quina
+	serv_adr.sin_port = htons(9050); //Escuchamos puerto 9050
+	
+	if(bind(sock_listen, (struct sockaddr *) &serv_adr, sizeof(serv_adr)) < 0)
+		printf ("Error al bind");
+	
+	if(listen(sock_listen,3) < 0)
+		printf("Error en el listen");
+	
+	int i;
+	
+	for(i=0; i<5; i++;){ //Solo atendemos a 5 peticiones
+		printf ("Escuchando\n);
+				
+		sock_conn = accept(sock_listen, NULL, NULL);
+		printf ("He recibido conexion\n);
+		
+		
+		ret = read(sock_conn, peticion, sizeof(peticion));
+		printf("Recibido\n);
+		
+		peticion[ret] = '\0';
+		
+		printf ( "Peticion: %s\n", peticion);
+	}
+	
+	read (new_socket, peticion);
+	printf ( "Solicitud recibida: %s\n", peticion);
+	
+	char *token = strtok ( peticion, ":");
+	if(token != NULL)
+	{
+		value = atof(token);
+	}
+	
+	if(strcmp(peticion, ctof) == 0)
+	{
+		resultado = ctof(valor);
+		sprintf(resultado, "%lf celsius son %lf en fahrenheits", valor, resultado);
+	}
+	else if ( strcmp(peticion, ftoc) == 0)
+	{
+		resultado = ftoc(valor);
+		sprintf(resultado, "%lf fahrenheits son %lf en celsius", valor, resultado);
+	}
+	else
+	{
+		sprintf ( resultado, "No ha sido posible, lo siento");
+	}
+}
